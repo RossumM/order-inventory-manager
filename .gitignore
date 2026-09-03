@@ -1,0 +1,19 @@
+# Local notes (not part of the repo)
+CLAUDE.md
+docs/
+TODO.md
+
+# Claude Code — personal permission grants (machine-specific)
+.claude/settings.local.json
+
+# Java / Maven
+target/
+*.class
+
+# IDE / OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+*.log

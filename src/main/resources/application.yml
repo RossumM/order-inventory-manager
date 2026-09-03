@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: order-inventory-service
+
+  # H2 in-memory — Phase 0 only. TODO Phase 1: containerised PostgreSQL via docker-compose.
+  datasource:
+    url: jdbc:h2:mem:orderinventory;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop        # fine while there is no real data; revisit in Phase 1
+    open-in-view: false            # off on purpose — forces explicit fetch decisions (Data Access marks)
+    properties:
+      hibernate:
+        format_sql: true
+
+  h2:
+    console:
+      enabled: true                # http://localhost:8080/h2-console
+
+# TODO Data Access · Cause N+1: turn on SQL + bind-parameter logging here when that mark starts:
+#   logging.level.org.hibernate.SQL: DEBUG
+#   logging.level.org.hibernate.orm.jdbc.bind: TRACE

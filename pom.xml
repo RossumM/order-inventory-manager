@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+      TODO (plumbing): pinned at Spring Boot 4.0.0 (first 4.0 GA, Nov 2025).
+      Check start.spring.io / Maven Central for the current 4.0.x patch and bump.
+      Fallback if 4.0.x causes trouble on this machine: 3.5.x also supports Java 25.
+    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.0.0</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>dev.merijn</groupId>
+    <artifactId>order-inventory-service</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>order-inventory-service</name>
+    <description>Order &amp; Inventory Service — Phase 0 learning vehicle (Java 25 + Spring Boot)</description>
+
+    <properties>
+        <!-- TODO: confirm local JDK is Temurin 25 (see docs/java-21-to-25.html). -->
+        <java.version>25</java.version>
+    </properties>
+
+    <dependencies>
+        <!-- Domain Model + Data Access marks -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <!-- Needed soon for controllers / AOP / events marks -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--
+          H2 in-memory for Phase 0 — zero setup, lets entity work start now.
+          TODO Phase 1: swap for containerised PostgreSQL via docker-compose.
+        -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!--
+          Deliberately NOT added yet:
+            - spring-boot-starter-validation  → Reflection · Swap to Bean Validation (hand-rolled first)
+            - spring-boot-starter-aop          → Dynamic Proxies · Spring AOP Version
+            - spring-boot-starter-actuator     → Phase 1
+            - lombok                           → constructors are written by hand on purpose
+                                                 (Domain Model · Constructor Injection)
+        -->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
