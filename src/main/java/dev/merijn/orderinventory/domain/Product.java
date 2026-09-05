@@ -1,5 +1,7 @@
 package dev.merijn.orderinventory.domain;
 
+import jakarta.persistence.*;
+
 import java.util.Objects;
 
 /**
@@ -12,9 +14,10 @@ import java.util.Objects;
  *
  * <p>Persistence mapping (annotations, {@code @Id} strategy) is intentionally not here yet.
  */
-public class Product {
+@Entity
+@Table(name = "PRODUCTS")
+public class Product extends AbstractEntity {
 
-    private Long id;
     private String sku;
     private String name;
     private Money unitPrice;
@@ -61,10 +64,6 @@ public class Product {
         this.discontinued = true;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public String getSku() {
         return sku;
     }
@@ -85,12 +84,11 @@ public class Product {
         return discontinued;
     }
 
-    // equals() / hashCode() deliberately left undefined — see TODO.md:
-    // "Decide the equals()/hashCode() approach for entities — know the detached-instance pitfall."
+    // equals() / hashCode() inherited from AbstractEntity (uuid-based).
 
     @Override
     public String toString() {
         return "Product{id=%s, sku=%s, name=%s, quantityOnHand=%d, discontinued=%b}"
-                .formatted(id, sku, name, quantityOnHand, discontinued);
+                .formatted(getId(), sku, name, quantityOnHand, discontinued);
     }
 }

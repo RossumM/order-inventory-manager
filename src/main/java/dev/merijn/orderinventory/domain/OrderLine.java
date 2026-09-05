@@ -1,5 +1,7 @@
 package dev.merijn.orderinventory.domain;
 
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -13,10 +15,13 @@ import java.util.Objects;
  * <p>Persistence mapping (the {@code @ManyToOne} to {@code Product}, the back-reference to
  * {@code Order}) is intentionally not here yet — that is the Data Access · JPA Relationships mark.
  */
-public class OrderLine {
+@Entity
+@Table(name = "ORDER_LINES")
+public class OrderLine extends AbstractEntity {
 
-    private Long id;
+    @ManyToOne
     private Order order;
+    @ManyToOne
     private Product product;
     private int quantity;
     private Money unitPrice;
@@ -49,10 +54,6 @@ public class OrderLine {
         this.order = Objects.requireNonNull(order, "order");
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public Order getOrder() {
         return order;
     }
@@ -69,11 +70,11 @@ public class OrderLine {
         return unitPrice;
     }
 
-    // equals() / hashCode() deliberately left undefined — see TODO.md.
+    // equals() / hashCode() inherited from AbstractEntity (uuid-based).
 
     @Override
     public String toString() {
         return "OrderLine{id=%s, product=%s, quantity=%d}"
-                .formatted(id, product == null ? null : product.getSku(), quantity);
+                .formatted(getId(), product == null ? null : product.getSku(), quantity);
     }
 }

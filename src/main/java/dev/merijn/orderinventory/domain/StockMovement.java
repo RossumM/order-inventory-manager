@@ -1,5 +1,7 @@
 package dev.merijn.orderinventory.domain;
 
+import jakarta.persistence.*;
+
 import java.time.Instant;
 import java.util.Objects;
 
@@ -13,13 +15,17 @@ import java.util.Objects;
  * <p>Persistence mapping (the {@code @ManyToOne} references, the enum column) is intentionally
  * not here yet.
  */
-public class StockMovement {
+@Entity
+@Table(name = "ORDER_MOVEMENTS")
+public class StockMovement extends AbstractEntity {
 
-    private Long id;
+    @ManyToOne
     private Product product;
     private int change;
+    @Enumerated(EnumType.STRING)
     private MovementReason reason;
     private Instant occurredAt;
+    @ManyToOne
     private Order originatingOrder;
 
     protected StockMovement() {
@@ -46,10 +52,6 @@ public class StockMovement {
         this.originatingOrder = originatingOrder;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public Product getProduct() {
         return product;
     }
@@ -72,11 +74,11 @@ public class StockMovement {
         return originatingOrder;
     }
 
-    // equals() / hashCode() deliberately left undefined — see TODO.md.
+    // equals() / hashCode() inherited from AbstractEntity (uuid-based).
 
     @Override
     public String toString() {
         return "StockMovement{id=%s, product=%s, change=%+d, reason=%s, occurredAt=%s}"
-                .formatted(id, product == null ? null : product.getSku(), change, reason, occurredAt);
+                .formatted(getId(), product == null ? null : product.getSku(), change, reason, occurredAt);
     }
 }

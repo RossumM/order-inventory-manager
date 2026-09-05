@@ -1,5 +1,7 @@
 package dev.merijn.orderinventory.domain;
 
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -17,12 +19,15 @@ import java.util.Objects;
  * <p>The {@code lines} collection is kept as a plain list for now; the real {@code @OneToMany}
  * mapping is the Data Access · JPA Relationships mark.
  */
-public class Order {
+@Entity
+@Table(name = "ORDERS")
+public class Order extends AbstractEntity {
 
-    private Long id;
     private Instant placedAt;
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
-    private List<OrderLine> lines = new ArrayList<>();
+    @OneToMany(mappedBy = "order")
+    private List<OrderLine> orderLines = new ArrayList<>();
     private Money total;
 
     protected Order() {
@@ -37,27 +42,27 @@ public class Order {
     public void addLine(OrderLine line) {
         Objects.requireNonNull(line, "line");
         line.assignToOrder(this);
-        lines.add(line);
+        orderLines.add(line);
         recalculateTotal();
     }
 
     /** Unmodifiable view — add lines through {@link #addLine} so the total stays in step. */
-    public List<OrderLine> getLines() {
-        return Collections.unmodifiableList(lines);
+    public List<OrderLine> getOrderLines() {
+        return Collections.unmodifiableList(orderLines);
     }
 
     /** Recompute {@code total} as the sum of the line totals (I7). */
     public void recalculateTotal() {
-        if (lines.isEmpty()) {
+        if (orderLines.isEmpty()) {
             this.total = null;
             return;
         }
         // TODO(Records mark): fold with Money.plus once Money arithmetic exists.
         BigDecimal sum = BigDecimal.ZERO;
-        for (OrderLine line : lines) {
+        for (OrderLine line : orderLines) {
             sum = sum.add(line.lineTotal().amount());
         }
-        this.total = new Money(sum, lines.getFirst().lineTotal().currency());
+        this.total = new Money(sum, orderLines.getFirst().lineTotal().currency());
     }
 
     // --- status lifecycle: PLACED -> CONFIRMED -> FULFILLED, or -> CANCELLED ---
@@ -86,10 +91,6 @@ public class Order {
         }
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public Instant getPlacedAt() {
         return placedAt;
     }
@@ -102,11 +103,11 @@ public class Order {
         return total;
     }
 
-    // equals() / hashCode() deliberately left undefined — see TODO.md.
+    // equals() / hashCode() inherited from AbstractEntity (uuid-based).
 
     @Override
     public String toString() {
         return "Order{id=%s, placedAt=%s, status=%s, lines=%d, total=%s}"
-                .formatted(id, placedAt, status, lines.size(), total);
+                .formatted(getId(), placedAt, status, orderLines.size(), total);
     }
 }
