@@ -16,7 +16,7 @@ import java.util.Objects;
  * not here yet.
  */
 @Entity
-@Table(name = "ORDER_MOVEMENTS")
+@Table(name = "STOCK_MOVEMENTS")
 public class StockMovement extends AbstractEntity {
 
     @ManyToOne

@@ -18,6 +18,7 @@ import java.util.Objects;
 @Table(name = "PRODUCTS")
 public class Product extends AbstractEntity {
 
+    @Column(nullable = false, unique = true)
     private String sku;
     private String name;
     private Money unitPrice;

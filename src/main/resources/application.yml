@@ -11,6 +11,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop        # fine while there is no real data; revisit in Phase 1
+      naming:
+        # Prefix embeddable columns with the owning property path: Money in Order.total -> total_amount,
+        # in Product.unitPrice -> unit_price_amount. Removes the need for per-site @AttributeOverride.
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
     open-in-view: false            # off on purpose — forces explicit fetch decisions (Data Access marks)
     properties:
       hibernate:
