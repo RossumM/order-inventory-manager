@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class EntityIdentityTest {
 
-    private static Product product(String sku) {
+    private static Product product(final String sku) {
         return new Product(sku, "name", new Money(new BigDecimal("1.00"), Currency.getInstance("EUR")));
     }
 

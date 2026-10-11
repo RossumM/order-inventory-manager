@@ -32,12 +32,13 @@ public class StockMovement extends AbstractEntity {
         // required by JPA / proxies
     }
 
-    public StockMovement(Product product, int change, MovementReason reason, Instant occurredAt) {
+    public StockMovement(final Product product, final int change, final MovementReason reason,
+                         final Instant occurredAt) {
         this(product, change, reason, occurredAt, null);
     }
 
-    public StockMovement(Product product, int change, MovementReason reason, Instant occurredAt,
-                         Order originatingOrder) {
+    public StockMovement(final Product product, final int change, final MovementReason reason,
+                         final Instant occurredAt, final Order originatingOrder) {
         this.product = Objects.requireNonNull(product, "product");
         this.reason = Objects.requireNonNull(reason, "reason");
         this.occurredAt = Objects.requireNonNull(occurredAt, "occurredAt");

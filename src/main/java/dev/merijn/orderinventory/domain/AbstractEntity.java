@@ -40,13 +40,14 @@ public abstract class AbstractEntity {
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
         if (!(o instanceof AbstractEntity other)) {
             return false;
         }
+
         return uuid.equals(other.uuid);
     }
 

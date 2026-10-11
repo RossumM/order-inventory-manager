@@ -29,7 +29,7 @@ public class Product extends AbstractEntity {
         // required by JPA / proxies
     }
 
-    public Product(String sku, String name, Money unitPrice) {
+    public Product(final String sku, final String name, final Money unitPrice) {
         this.sku = Objects.requireNonNull(sku, "sku");
         this.name = Objects.requireNonNull(name, "name");
         this.unitPrice = Objects.requireNonNull(unitPrice, "unitPrice");
@@ -43,7 +43,7 @@ public class Product extends AbstractEntity {
      *
      * @throws IllegalStateException if the result would be negative (I1)
      */
-    public void adjustStock(int delta) {
+    public void adjustStock(final int delta) {
         int updated = this.quantityOnHand + delta;
         if (updated < 0) {
             throw new IllegalStateException(
@@ -53,11 +53,11 @@ public class Product extends AbstractEntity {
     }
 
     /** Change the current selling price. Does not touch any {@link OrderLine} already placed (I4). */
-    public void changeUnitPrice(Money newPrice) {
+    public void changeUnitPrice(final Money newPrice) {
         this.unitPrice = Objects.requireNonNull(newPrice, "newPrice");
     }
 
-    public void rename(String newName) {
+    public void rename(final String newName) {
         this.name = Objects.requireNonNull(newName, "newName");
     }
 

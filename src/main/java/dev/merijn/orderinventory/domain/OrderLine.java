@@ -30,7 +30,7 @@ public class OrderLine extends AbstractEntity {
         // required by JPA / proxies
     }
 
-    public OrderLine(Product product, int quantity) {
+    public OrderLine(final Product product, final int quantity) {
         this.product = Objects.requireNonNull(product, "product");
         if (quantity < 1) {
             throw new IllegalArgumentException("order line quantity must be at least 1 (I3), was " + quantity);
@@ -50,7 +50,7 @@ public class OrderLine extends AbstractEntity {
     }
 
     /** Set the owning order. Package-private: only {@link Order#addLine} should call this. */
-    void assignToOrder(Order order) {
+    void assignToOrder(final Order order) {
         this.order = Objects.requireNonNull(order, "order");
     }
 

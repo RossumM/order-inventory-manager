@@ -34,12 +34,12 @@ public class Order extends AbstractEntity {
         // required by JPA / proxies
     }
 
-    public Order(Instant placedAt) {
+    public Order(final Instant placedAt) {
         this.placedAt = Objects.requireNonNull(placedAt, "placedAt");
         this.status = OrderStatus.PLACED;
     }
 
-    public void addLine(OrderLine line) {
+    public void addLine(final OrderLine line) {
         Objects.requireNonNull(line, "line");
         line.assignToOrder(this);
         orderLines.add(line);
@@ -84,7 +84,7 @@ public class Order extends AbstractEntity {
         this.status = OrderStatus.CANCELLED;
     }
 
-    private void requireStatus(OrderStatus expected, String action) {
+    private void requireStatus(final OrderStatus expected, final String action) {
         if (status != expected) {
             throw new IllegalStateException(
                     "cannot %s an order in status %s (expected %s)".formatted(action, status, expected));
