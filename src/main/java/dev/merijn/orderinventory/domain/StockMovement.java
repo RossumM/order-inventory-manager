@@ -12,8 +12,7 @@ import java.util.Objects;
  * <p>Movements are never edited or deleted; the stock effect of a cancelled or returned
  * sale is undone by recording a compensating movement (I8).
  *
- * <p>Persistence mapping (the {@code @ManyToOne} references, the enum column) is intentionally
- * not here yet.
+ * @author Merijn van Rossum
  */
 @Entity
 @Table(name = "STOCK_MOVEMENTS")

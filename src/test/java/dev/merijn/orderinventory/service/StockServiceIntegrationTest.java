@@ -17,6 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * The container wires {@link StockService} with the real Spring Data repository beans; the
  * two-step write runs against H2.
+ *
+ * @author Merijn van Rossum
  */
 @SpringBootTest
 class StockServiceIntegrationTest {

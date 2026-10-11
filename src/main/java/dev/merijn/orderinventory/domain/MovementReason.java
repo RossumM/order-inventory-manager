@@ -5,6 +5,8 @@ package dev.merijn.orderinventory.domain;
  *
  * <p>{@link #SALE} movements carry a link back to the originating {@link Order};
  * the others do not.
+ *
+ * @author Merijn van Rossum
  */
 public enum MovementReason {
     SALE,

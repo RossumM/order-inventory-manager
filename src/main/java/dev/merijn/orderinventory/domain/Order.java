@@ -16,8 +16,7 @@ import java.util.Objects;
  * {@link #recalculateTotal()} is called whenever the line set changes so the two never drift.
  * An order with zero lines is not valid (I2) — enforced at placement time by the caller, not here.
  *
- * <p>The {@code lines} collection is kept as a plain list for now; the real {@code @OneToMany}
- * mapping is the Data Access · JPA Relationships mark.
+ * @author Merijn van Rossum
  */
 @Entity
 @Table(name = "ORDERS")

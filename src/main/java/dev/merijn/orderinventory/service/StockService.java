@@ -15,6 +15,8 @@ import java.time.Instant;
  *
  * <p>No {@code @Transactional} yet — the two-step write below is deliberately non-atomic until the
  * Transactions subgoal, where an interrupted write is shown diverging the ledger from the counter (I6).
+ *
+ * @author Merijn van Rossum
  */
 @Service
 public class StockService {

@@ -11,14 +11,24 @@ import java.util.Currency;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** The check in isolation. Zero counts as positive (as in financial reports); null is valid. */
-class PositiveAmountCheckTest {
+/**
+ * The {@code @PositiveAmount} rules in isolation (zero counts as positive, as in financial reports; null is
+ * valid), plus one test that the validator enforces the annotation.
+ *
+ * @author Merijn van Rossum
+ */
+class PositiveAmountCheckerTest {
 
-    private final PositiveAmountCheck check = new PositiveAmountCheck();
+    private final PositiveAmountChecker checker = new PositiveAmountChecker();
 
     static class Holder {
         @PositiveAmount(message = "custom message")
         private BigDecimal amount;
+    }
+
+    static class Negative {
+        @PositiveAmount(message = "custom message")
+        private BigDecimal amount = new BigDecimal("-1");
     }
 
     private static final Annotation ANNOTATION = annotationOnHolder();   // immutable, so safe to share
@@ -38,34 +48,40 @@ class PositiveAmountCheckTest {
     @ParameterizedTest
     @ValueSource(strings = {"0", "0.0", "0.00", "0.01", "5", "1234567.89"})
     void zeroAndPositiveAmountsAreValid(final String amount) {
-        assertThat(check.isValid(new BigDecimal(amount), ANNOTATION)).isTrue();
+        assertThat(checker.isValid(new BigDecimal(amount), ANNOTATION)).isTrue();
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"-0.01", "-1", "-100.50"})
     void negativeAmountsAreInvalid(final String amount) {
-        assertThat(check.isValid(new BigDecimal(amount), ANNOTATION)).isFalse();
+        assertThat(checker.isValid(new BigDecimal(amount), ANNOTATION)).isFalse();
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"0", "0.00", "0.01", "5"})
     void moneyWithZeroOrPositiveAmountIsValid(final String amount) {
-        assertThat(check.isValid(eur(amount), ANNOTATION)).isTrue();
+        assertThat(checker.isValid(eur(amount), ANNOTATION)).isTrue();
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"-0.01", "-100.50"})
     void moneyWithNegativeAmountIsInvalid(final String amount) {
-        assertThat(check.isValid(eur(amount), ANNOTATION)).isFalse();
+        assertThat(checker.isValid(eur(amount), ANNOTATION)).isFalse();
     }
 
     @Test
     void nullIsValid() {
-        assertThat(check.isValid(null, ANNOTATION)).isTrue();
+        assertThat(checker.isValid(null, ANNOTATION)).isTrue();
     }
 
     @Test
     void messageComesFromTheAnnotation() {
-        assertThat(check.message(ANNOTATION, new BigDecimal("-1"))).isEqualTo("custom message");
+        assertThat(checker.message(ANNOTATION, new BigDecimal("-1"))).isEqualTo("custom message");
+    }
+
+    @Test
+    void negativeAmountIsReportedByTheValidator() {
+        assertThat(new Validator().validate(new Negative()))
+                .containsExactly(new Violation("amount", "custom message"));
     }
 }

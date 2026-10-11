@@ -12,7 +12,7 @@ import java.util.Objects;
  * the cache never goes negative (I1) — the concurrency-safe version of the decrement is a
  * later mark.
  *
- * <p>Persistence mapping (annotations, {@code @Id} strategy) is intentionally not here yet.
+ * @author Merijn van Rossum
  */
 @Entity
 @Table(name = "PRODUCTS")

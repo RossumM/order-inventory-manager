@@ -5,7 +5,10 @@ import dev.merijn.orderinventory.domain.Money;
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 
-public class PositiveAmountCheck implements Check {
+/**
+ * @author Merijn van Rossum
+ */
+public class PositiveAmountChecker implements Checker {
     @Override
     public boolean isValid(Object value, Annotation annotation) {
         return switch (value) {

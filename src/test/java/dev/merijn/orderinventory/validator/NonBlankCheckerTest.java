@@ -7,10 +7,14 @@ import java.lang.annotation.Annotation;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/** The check in isolation, no scanner involved. Already green. */
-class NonBlankCheckTest {
+/**
+ * The {@code @NonBlank} rules in isolation, plus one test that the validator enforces the annotation.
+ *
+ * @author Merijn van Rossum
+ */
+class NonBlankCheckerTest {
 
-    private final NonBlankCheck check = new NonBlankCheck();
+    private final NonBlankChecker checker = new NonBlankChecker();
 
     static class Holder {
         @NonBlank(message = "custom message")
@@ -29,25 +33,31 @@ class NonBlankCheckTest {
 
     @Test
     void nullEmptyAndBlankAreInvalid() {
-        assertThat(check.isValid(null, ANNOTATION)).isFalse();
-        assertThat(check.isValid("", ANNOTATION)).isFalse();
-        assertThat(check.isValid("   ", ANNOTATION)).isFalse();
+        assertThat(checker.isValid(null, ANNOTATION)).isFalse();
+        assertThat(checker.isValid("", ANNOTATION)).isFalse();
+        assertThat(checker.isValid("   ", ANNOTATION)).isFalse();
     }
 
     @Test
     void textWithContentIsValid() {
-        assertThat(check.isValid("a", ANNOTATION)).isTrue();
-        assertThat(check.isValid("  a  ", ANNOTATION)).isTrue();
+        assertThat(checker.isValid("a", ANNOTATION)).isTrue();
+        assertThat(checker.isValid("  a  ", ANNOTATION)).isTrue();
     }
 
     @Test
     void nonStringThrowsIllegalArgumentException() {
-        assertThatThrownBy(() -> check.isValid(42, ANNOTATION))
+        assertThatThrownBy(() -> checker.isValid(42, ANNOTATION))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void messageComesFromTheAnnotation() {
-        assertThat(check.message(ANNOTATION, "")).isEqualTo("custom message");
+        assertThat(checker.message(ANNOTATION, "")).isEqualTo("custom message");
+    }
+
+    @Test
+    void blankValueIsReportedByTheValidator() {
+        assertThat(new Validator().validate(new Holder()))
+                .containsExactly(new Violation("value", "custom message"));
     }
 }

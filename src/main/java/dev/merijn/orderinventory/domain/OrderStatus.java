@@ -6,6 +6,8 @@ package dev.merijn.orderinventory.domain;
  * <p>Deliberately small and explicit: later marks (audit aspect, Spring events,
  * transactional stock changes) hang side effects off these transitions.
  * Legal moves: {@code PLACED -> CONFIRMED -> FULFILLED}, and {@code PLACED}/{@code CONFIRMED -> CANCELLED}.
+ *
+ * @author Merijn van Rossum
  */
 public enum OrderStatus {
     PLACED,

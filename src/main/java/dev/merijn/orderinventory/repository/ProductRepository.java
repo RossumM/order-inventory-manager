@@ -8,6 +8,8 @@ import java.util.Optional;
 /**
  * {@code JpaRepository} gives CRUD + paging; Spring Data generates the implementation
  * (a proxy over {@code SimpleJpaRepository}) at startup and registers it as a bean.
+ *
+ * @author Merijn van Rossum
  */
 public interface ProductRepository extends JpaRepository<Product, Long> {
 

@@ -16,6 +16,8 @@ import java.util.UUID;
  *
  * <p>Rationale — why not {@code id} or {@code ==} for equality, the random-UUID index cost, the
  * time-ordered-id alternatives — in {@code docs/design-notes.html} §2.
+ *
+ * @author Merijn van Rossum
  */
 @MappedSuperclass
 public abstract class AbstractEntity {

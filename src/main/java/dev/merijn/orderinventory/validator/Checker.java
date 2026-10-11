@@ -3,10 +3,12 @@ package dev.merijn.orderinventory.validator;
 import java.lang.annotation.Annotation;
 
 /**
- * The rule behind one constraint annotation. Receives the annotation instance so a check can read
+ * The rule behind one constraint annotation. Receives the annotation instance so a checker can read
  * its members (e.g. {@code min}/{@code max}).
+ *
+ * @author Merijn van Rossum
  */
-public interface Check {
+public interface Checker {
 
     boolean isValid(Object value, Annotation annotation);
 

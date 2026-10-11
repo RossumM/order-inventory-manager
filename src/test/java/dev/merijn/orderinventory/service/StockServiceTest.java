@@ -22,6 +22,8 @@ import static org.mockito.Mockito.when;
 /**
  * Constructor injection means the service is a plain object: {@code new StockService(mock, mock)},
  * no Spring container. This test exercises that.
+ *
+ * @author Merijn van Rossum
  */
 class StockServiceTest {
 

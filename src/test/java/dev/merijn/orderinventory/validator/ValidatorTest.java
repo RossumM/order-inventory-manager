@@ -3,25 +3,54 @@ package dev.merijn.orderinventory.validator;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
-import java.math.BigDecimal;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Pins the behaviour of {@link Validator}. Most of these fail until {@code validate} is implemented.
- * Note the negative tests: an empty violation list looks identical to "valid", so invalid input must
- * be asserted to produce specific, named violations.
+ * Behaviour of the {@link Validator} engine, using constraints defined in this class: the engine
+ * knows no real constraint. Each real constraint is tested, and wired to the validator, in its own
+ * {@code *CheckerTest}.
+ *
+ * @author Merijn van Rossum
  */
 class ValidatorTest {
 
     private final Validator validator = new Validator();
 
+    // ---- a constraint local to this test: a String field must equal "ok" ----
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    @CheckerBinding(validatedBy = MustBeOkChecker.class)
+    @interface MustBeOk {
+        String message() default "must be ok";
+    }
+
+    static class MustBeOkChecker implements Checker {
+        @Override
+        public boolean isValid(final Object value, final Annotation annotation) {
+            if (value instanceof String s) {
+                return s.equals("ok");
+            }
+            throw new IllegalArgumentException("@MustBeOk is not supported on " + value);
+        }
+
+        @Override
+        public String message(final Annotation annotation, final Object value) {
+            return ((MustBeOk) annotation).message();
+        }
+    }
+
     // ---- sample classes: private fields on purpose, the validator must cope with that ----
 
     static class Person {
-        @NonBlank
+        @MustBeOk
         private String name;
         private String nickname;                    // no annotation: never validated
 
@@ -32,7 +61,7 @@ class ValidatorTest {
     }
 
     static class Employee extends Person {
-        @NonBlank
+        @MustBeOk
         private String department;
 
         Employee(final String name, final String nickname, final String department) {
@@ -42,9 +71,9 @@ class ValidatorTest {
     }
 
     static class TwoFields {
-        @NonBlank
+        @MustBeOk
         private String first;
-        @NonBlank
+        @MustBeOk
         private String second;
 
         TwoFields(final String first, final String second) {
@@ -53,61 +82,28 @@ class ValidatorTest {
         }
     }
 
-    static class Priced {
-        @PositiveAmount
-        private BigDecimal price;
-        @NonBlank
-        private String label;
-
-        Priced(final BigDecimal price, final String label) {
-            this.price = price;
-            this.label = label;
-        }
-    }
-
     static class StaticField {
-        @NonBlank
-        private static String shared = "";          // a constraint on static state is misuse
+        @MustBeOk
+        private static String shared = "ok";        // a constraint on static state is misuse
     }
 
     static class MisplacedAnnotation {
-        @NonBlank
-        private Integer count = 1;                  // @NonBlank on a non-String
+        @MustBeOk
+        private Integer count = 1;                  // @MustBeOk on a non-String
     }
 
     // ---- violations are found ----
 
     @Test
-    void nullValueIsReported() {
-        List<Violation> violations = validator.validate(new Person(null, "x"));
-
-        assertThat(violations).extracting(Violation::field).containsExactly("name");
-    }
-
-    @Test
-    void emptyStringIsReported() {
-        List<Violation> violations = validator.validate(new Person("", "x"));
-
-        assertThat(violations).extracting(Violation::field).containsExactly("name");
-    }
-
-    @Test
-    void whitespaceOnlyStringIsReported() {
-        List<Violation> violations = validator.validate(new Person("   ", "x"));
-
-        assertThat(violations).extracting(Violation::field).containsExactly("name");
-    }
-
-    @Test
     void violationHasTheFieldNameAndTheAnnotationsMessage() throws Exception {
-        List<Violation> violations = validator.validate(new Person("", "x"));
+        List<Violation> violations = validator.validate(new Person("no", "x"));
 
-        assertThat(violations).containsExactly(new Violation("name", defaultMessage(NonBlank.class)));
+        assertThat(violations).containsExactly(new Violation("name", defaultMessage(MustBeOk.class)));
     }
 
     @Test
     void inheritedAndOwnFieldsAreAllReported() {
-        List<Violation> violations = validator.validate(new Employee("", "x", ""));
+        List<Violation> violations = validator.validate(new Employee("no", "x", "no"));
 
         assertThat(violations).extracting(Violation::field)
                 .containsExactlyInAnyOrder("name", "department");
@@ -115,34 +111,27 @@ class ValidatorTest {
 
     @Test
     void everyViolationIsCollectedNotJustTheFirst() {
-        List<Violation> violations = validator.validate(new TwoFields("", "  "));
+        List<Violation> violations = validator.validate(new TwoFields("no", "no"));
 
         assertThat(violations).extracting(Violation::field)
                 .containsExactlyInAnyOrder("first", "second");
     }
 
-    @Test
-    void differentConstraintAnnotationsOnOneObjectAreAllReported() throws Exception {
-        List<Violation> violations = validator.validate(new Priced(new BigDecimal("-1.00"), ""));
-
-        assertThat(violations).containsExactlyInAnyOrder(
-                new Violation("price", defaultMessage(PositiveAmount.class)),
-                new Violation("label", defaultMessage(NonBlank.class)));
-    }
-
-    // No violations
+    // ---- no violations ----
 
     @Test
     void validObjectProducesNoViolations() {
-        assertThat(validator.validate(new Person("Ann", null))).isEmpty();
-        assertThat(validator.validate(new Employee("Ann", null, "Sales"))).isEmpty();
+        assertThat(validator.validate(new Person("ok", null))).isEmpty();
+        assertThat(validator.validate(new Employee("ok", null, "ok"))).isEmpty();
     }
+
+    // ---- misuse ----
 
     @Test
     void constraintOnAStaticFieldThrowsIllegalStateException() {
         assertThatThrownBy(() -> validator.validate(new StaticField()))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("@NonBlank is not supported on static field StaticField.shared");
+                .hasMessage("@MustBeOk is not supported on static field StaticField.shared");
     }
 
     @Test

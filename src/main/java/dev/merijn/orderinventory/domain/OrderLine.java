@@ -12,8 +12,7 @@ import java.util.Objects;
  * is a snapshot copied from the {@link Product} when the order is placed and never moves
  * afterwards, even if the product's price later changes (I4).
  *
- * <p>Persistence mapping (the {@code @ManyToOne} to {@code Product}, the back-reference to
- * {@code Order}) is intentionally not here yet — that is the Data Access · JPA Relationships mark.
+ * @author Merijn van Rossum
  */
 @Entity
 @Table(name = "ORDER_LINES")

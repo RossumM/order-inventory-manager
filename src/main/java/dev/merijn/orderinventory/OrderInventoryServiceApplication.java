@@ -3,6 +3,9 @@ package dev.merijn.orderinventory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * @author Merijn van Rossum
+ */
 @SpringBootApplication
 public class OrderInventoryServiceApplication {
 

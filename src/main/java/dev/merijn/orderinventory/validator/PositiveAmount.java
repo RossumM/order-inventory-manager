@@ -5,8 +5,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * @author Merijn van Rossum
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
+@CheckerBinding(validatedBy = PositiveAmountChecker.class)
 public @interface PositiveAmount {
 
     String message() default "Amount must be greater than or equal to 0.";

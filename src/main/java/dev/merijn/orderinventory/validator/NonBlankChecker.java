@@ -2,8 +2,12 @@ package dev.merijn.orderinventory.validator;
 
 import java.lang.annotation.Annotation;
 
-/** {@link NonBlank}: null, empty and whitespace-only strings are invalid. */
-public class NonBlankCheck implements Check {
+/**
+ * {@link NonBlank}: null, empty and whitespace-only strings are invalid.
+ *
+ * @author Merijn van Rossum
+ */
+public class NonBlankChecker implements Checker {
 
     @Override
     public boolean isValid(final Object value, final Annotation annotation) {
