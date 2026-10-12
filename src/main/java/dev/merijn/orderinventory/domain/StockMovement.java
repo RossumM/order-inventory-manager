@@ -1,6 +1,7 @@
 package dev.merijn.orderinventory.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -18,11 +19,14 @@ import java.util.Objects;
 @Table(name = "STOCK_MOVEMENTS")
 public class StockMovement extends AbstractEntity {
 
+    @NotNull
     @ManyToOne
     private Product product;
     private int change;
+    @NotNull
     @Enumerated(EnumType.STRING)
     private MovementReason reason;
+    @NotNull
     private Instant occurredAt;
     @ManyToOne
     private Order originatingOrder;

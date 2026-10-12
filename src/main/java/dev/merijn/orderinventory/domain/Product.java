@@ -1,6 +1,10 @@
 package dev.merijn.orderinventory.domain;
 
+import dev.merijn.orderinventory.validation.NonNegativeAmount;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.Objects;
 
@@ -17,10 +21,15 @@ import java.util.Objects;
 @Table(name = "PRODUCTS")
 public class Product extends AbstractEntity {
 
+    @NotBlank
     @Column(nullable = false, unique = true)
     private String sku;
+    @NotBlank
     private String name;
+    @NotNull
+    @NonNegativeAmount
     private Money unitPrice;
+    @PositiveOrZero
     private int quantityOnHand;
     private boolean discontinued;
 

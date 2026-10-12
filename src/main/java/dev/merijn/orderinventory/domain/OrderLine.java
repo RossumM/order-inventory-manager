@@ -1,6 +1,9 @@
 package dev.merijn.orderinventory.domain;
 
+import dev.merijn.orderinventory.validation.NonNegativeAmount;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -21,7 +24,10 @@ public class OrderLine extends AbstractEntity {
     private Order order;
     @ManyToOne
     private Product product;
+    @Positive
     private int quantity;
+    @NotNull
+    @NonNegativeAmount
     private Money unitPrice;
 
     protected OrderLine() {
