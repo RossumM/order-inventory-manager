@@ -1,4 +1,4 @@
-package dev.merijn.orderinventory.validator;
+package dev.merijn.orderinventory.handmade.validation;
 
 import java.lang.annotation.Annotation;
 
@@ -12,7 +12,7 @@ public class IntRangeChecker implements Checker {
             return true;
         }
         if (!(value instanceof Integer)) {
-            throw new IllegalArgumentException("value must be an integer");
+            throw new IllegalArgumentException("@IntRange is not supported on " + value.getClass().getName());
         }
         int intValue = (Integer) value;
         return intValue >= getMin(annotation) && intValue <= getMax(annotation);

@@ -1,4 +1,4 @@
-package dev.merijn.orderinventory.validator;
+package dev.merijn.orderinventory.handmade.validation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,6 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * A whole-number field must be between min and max, both included. Leave a bound out to keep that side open.
+ * Null is allowed.
+ *
  * @author Merijn van Rossum
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -16,5 +19,5 @@ public @interface IntRange {
 
     int max() default Integer.MAX_VALUE;
 
-    String message() default "Range must be between {min} and {max}, but is: {actual}";
+    String message() default "must be between {min} and {max}, but is: {actual}";
 }

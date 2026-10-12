@@ -5,12 +5,11 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 /**
- * An article that can be stocked and sold.
+ * Something that can be stocked and sold.
  *
- * <p>{@code quantityOnHand} is a fast-read cache; the {@link StockMovement} ledger is the
- * source of truth (invariant I6). This class only enforces the single-threaded guard that
- * the cache never goes negative (I1) — the concurrency-safe version of the decrement is a
- * later mark.
+ * The quantity on hand is a stored running total, so it can be read quickly. The stock movements are the real
+ * history; this total follows them. Here we only make sure it never drops below zero. Keeping that safe when
+ * several sales happen at the same time comes later.
  *
  * @author Merijn van Rossum
  */
@@ -29,6 +28,7 @@ public class Product extends AbstractEntity {
         // required by JPA / proxies
     }
 
+    /** Creates a product with no stock. */
     public Product(final String sku, final String name, final Money unitPrice) {
         this.sku = Objects.requireNonNull(sku, "sku");
         this.name = Objects.requireNonNull(name, "name");
@@ -38,10 +38,9 @@ public class Product extends AbstractEntity {
     }
 
     /**
-     * Apply a signed change to the running stock cache.
-     * Positive = delivery / restock / customer return, negative = sale / correction.
+     * Changes the quantity on hand: positive for a delivery or return, negative for a sale or correction.
      *
-     * @throws IllegalStateException if the result would be negative (I1)
+     * @throws IllegalStateException if the stock would drop below zero
      */
     public void adjustStock(final int delta) {
         int updated = this.quantityOnHand + delta;
@@ -52,15 +51,17 @@ public class Product extends AbstractEntity {
         this.quantityOnHand = updated;
     }
 
-    /** Change the current selling price. Does not touch any {@link OrderLine} already placed (I4). */
+    /** Sets a new selling price. Orders that were already placed keep their old price. */
     public void changeUnitPrice(final Money newPrice) {
         this.unitPrice = Objects.requireNonNull(newPrice, "newPrice");
     }
 
+    /** Changes the name. */
     public void rename(final String newName) {
         this.name = Objects.requireNonNull(newName, "newName");
     }
 
+    /** Marks the product as no longer for sale. Its history is kept. */
     public void discontinue() {
         this.discontinued = true;
     }
@@ -84,8 +85,6 @@ public class Product extends AbstractEntity {
     public boolean isDiscontinued() {
         return discontinued;
     }
-
-    // equals() / hashCode() inherited from AbstractEntity (uuid-based).
 
     @Override
     public String toString() {

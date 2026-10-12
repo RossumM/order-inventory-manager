@@ -6,11 +6,10 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
- * One product-and-quantity within an {@link Order}.
+ * One product in a certain quantity on an order. A line only exists as part of its order.
  *
- * <p>Owned by its order (composition): a line has no meaning outside it. The {@code unitPrice}
- * is a snapshot copied from the {@link Product} when the order is placed and never moves
- * afterwards, even if the product's price later changes (I4).
+ * The unit price is copied from the product when the line is created, so a later price change doesn't affect
+ * orders that were already placed.
  *
  * @author Merijn van Rossum
  */
@@ -29,18 +28,17 @@ public class OrderLine extends AbstractEntity {
         // required by JPA / proxies
     }
 
+    /** Creates a line and copies the product's current price. The quantity must be at least 1. */
     public OrderLine(final Product product, final int quantity) {
         this.product = Objects.requireNonNull(product, "product");
         if (quantity < 1) {
-            throw new IllegalArgumentException("order line quantity must be at least 1 (I3), was " + quantity);
+            throw new IllegalArgumentException("order line quantity must be at least 1, was " + quantity);
         }
         this.quantity = quantity;
-        this.unitPrice = product.getUnitPrice(); // snapshot at placement (I4)
+        this.unitPrice = product.getUnitPrice(); // a copy, so later price changes don't affect this line
     }
 
-    /**
-     * {@code quantity} &times; snapshot unit price. Derived, not stored (building block for I7).
-     */
+    /** The total for this line: quantity times unit price. */
     public Money lineTotal() {
         // TODO(Records mark): replace with unitPrice.times(quantity) once Money arithmetic exists.
         return new Money(
@@ -48,7 +46,7 @@ public class OrderLine extends AbstractEntity {
                 unitPrice.currency());
     }
 
-    /** Set the owning order. Package-private: only {@link Order#addLine} should call this. */
+    /** Sets the order this line belongs to. Only Order.addLine should call this. */
     void assignToOrder(final Order order) {
         this.order = Objects.requireNonNull(order, "order");
     }
@@ -68,8 +66,6 @@ public class OrderLine extends AbstractEntity {
     public Money getUnitPrice() {
         return unitPrice;
     }
-
-    // equals() / hashCode() inherited from AbstractEntity (uuid-based).
 
     @Override
     public String toString() {

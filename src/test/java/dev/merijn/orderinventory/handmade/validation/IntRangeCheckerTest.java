@@ -1,4 +1,4 @@
-package dev.merijn.orderinventory.validator;
+package dev.merijn.orderinventory.handmade.validation;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,8 +9,8 @@ import java.lang.annotation.Annotation;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * The {@code @IntRange} rules in isolation (both bounds inclusive; null is valid), plus one test that
- * the validator enforces the annotation.
+ * Tests the IntRange rules on their own (both bounds included, null is valid), plus one test that the validator
+ * enforces the annotation.
  *
  * @author Merijn van Rossum
  */

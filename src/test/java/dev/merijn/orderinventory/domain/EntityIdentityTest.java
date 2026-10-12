@@ -11,9 +11,8 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Identity semantics from {@link AbstractEntity}: equality is by {@code uuid}, which is assigned at
- * construction — so it is stable before persistence and under mutation, unlike an id-based scheme.
- * Pure POJO test, no Spring context.
+ * Entities are equal when they share a uuid. The uuid exists from the moment an entity is created, so equality
+ * stays the same before and after saving. No Spring context needed.
  *
  * @author Merijn van Rossum
  */

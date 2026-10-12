@@ -20,8 +20,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 /**
- * Constructor injection means the service is a plain object: {@code new StockService(mock, mock)},
- * no Spring container. This test exercises that.
+ * Tests StockService with mocked repositories. Because the dependencies come in through the constructor, no
+ * Spring context is needed.
  *
  * @author Merijn van Rossum
  */

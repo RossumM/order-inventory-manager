@@ -7,6 +7,9 @@ import java.math.BigDecimal;
 import java.util.Currency;
 
 /**
+ * An amount of money in a certain currency. Negative amounts are allowed; whether an amount must be positive is
+ * up to the field that holds it.
+ *
  * @author Merijn van Rossum
  */
 @Embeddable

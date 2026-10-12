@@ -6,11 +6,11 @@ import java.time.Instant;
 import java.util.Objects;
 
 /**
- * One recorded change to one product's stock, with its reason. The append-only ledger
- * that {@link Product#getQuantityOnHand()} is a cache of (I6).
+ * A change in the stock of one product, with the reason for it. Together these movements form the history of
+ * the stock; the quantity on a product is a running total of them.
  *
- * <p>Movements are never edited or deleted; the stock effect of a cancelled or returned
- * sale is undone by recording a compensating movement (I8).
+ * Movements are never changed or deleted. To undo a sale or a return, a new movement is added that does the
+ * opposite.
  *
  * @author Merijn van Rossum
  */
@@ -31,11 +31,13 @@ public class StockMovement extends AbstractEntity {
         // required by JPA / proxies
     }
 
+    /** Creates a movement that isn't linked to an order. */
     public StockMovement(final Product product, final int change, final MovementReason reason,
                          final Instant occurredAt) {
         this(product, change, reason, occurredAt, null);
     }
 
+    /** Creates a movement. The change can't be zero, and only a sale can be linked to an order. */
     public StockMovement(final Product product, final int change, final MovementReason reason,
                          final Instant occurredAt, final Order originatingOrder) {
         this.product = Objects.requireNonNull(product, "product");
@@ -56,7 +58,7 @@ public class StockMovement extends AbstractEntity {
         return product;
     }
 
-    /** Signed: negative for a sale, positive for a delivery / restock, either sign for a correction. */
+    /** Positive for a delivery or restock, negative for a sale. A correction can be either. */
     public int getChange() {
         return change;
     }
@@ -69,12 +71,10 @@ public class StockMovement extends AbstractEntity {
         return occurredAt;
     }
 
-    /** The order that caused this movement, or {@code null} unless {@code reason == SALE}. */
+    /** The order that caused this movement. Null unless it was a sale. */
     public Order getOriginatingOrder() {
         return originatingOrder;
     }
-
-    // equals() / hashCode() inherited from AbstractEntity (uuid-based).
 
     @Override
     public String toString() {

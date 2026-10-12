@@ -1,4 +1,4 @@
-package dev.merijn.orderinventory.validator;
+package dev.merijn.orderinventory.handmade.validation;
 
 import org.junit.jupiter.api.Test;
 
@@ -13,9 +13,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Behaviour of the {@link Validator} engine, using constraints defined in this class: the engine
- * knows no real constraint. Each real constraint is tested, and wired to the validator, in its own
- * {@code *CheckerTest}.
+ * Tests the validator itself, using a constraint defined in this class, because the validator doesn't know any
+ * real constraint. Each real constraint is tested in its own CheckerTest, including one test that the validator
+ * enforces it.
  *
  * @author Merijn van Rossum
  */

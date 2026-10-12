@@ -15,8 +15,7 @@ import java.util.Currency;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * The container wires {@link StockService} with the real Spring Data repository beans; the
- * two-step write runs against H2.
+ * Runs StockService with the real repositories against the in-memory database.
  *
  * @author Merijn van Rossum
  */

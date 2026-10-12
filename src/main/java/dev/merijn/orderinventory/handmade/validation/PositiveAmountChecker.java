@@ -1,4 +1,4 @@
-package dev.merijn.orderinventory.validator;
+package dev.merijn.orderinventory.handmade.validation;
 
 import dev.merijn.orderinventory.domain.Money;
 
@@ -10,17 +10,18 @@ import java.math.BigDecimal;
  */
 public class PositiveAmountChecker implements Checker {
     @Override
-    public boolean isValid(Object value, Annotation annotation) {
+    public boolean isValid(final Object value, final Annotation annotation) {
         return switch (value) {
             case null -> true;
             case BigDecimal decimal -> BigDecimal.ZERO.compareTo(decimal) <= 0;
             case Money money -> BigDecimal.ZERO.compareTo(money.amount()) <= 0;
-            default -> throw new IllegalArgumentException("Unexpected value: " + value);
+            default -> throw new IllegalArgumentException(
+                    "@PositiveAmount is not supported on " + value.getClass().getName());
         };
     }
 
     @Override
-    public String message(Annotation annotation, Object value) {
+    public String message(final Annotation annotation, final Object value) {
         return ((PositiveAmount) annotation).message();
     }
 }

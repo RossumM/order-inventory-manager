@@ -1,11 +1,8 @@
 package dev.merijn.orderinventory.domain;
 
 /**
- * Where an {@link Order} sits in its lifecycle.
- *
- * <p>Deliberately small and explicit: later marks (audit aspect, Spring events,
- * transactional stock changes) hang side effects off these transitions.
- * Legal moves: {@code PLACED -> CONFIRMED -> FULFILLED}, and {@code PLACED}/{@code CONFIRMED -> CANCELLED}.
+ * Where an order is in its lifecycle: placed, confirmed, then fulfilled. An order can be cancelled as long as
+ * it isn't fulfilled.
  *
  * @author Merijn van Rossum
  */

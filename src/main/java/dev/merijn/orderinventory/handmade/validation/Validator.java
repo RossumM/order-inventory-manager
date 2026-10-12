@@ -1,4 +1,4 @@
-package dev.merijn.orderinventory.validator;
+package dev.merijn.orderinventory.handmade.validation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Generic engine: scans any object's fields for constraint annotations (those carrying
- * {@link CheckerBinding}) and runs the {@link Checker} each one names. Knows no concrete constraint.
- * Walkthrough: docs/walkthrough-validation.html.
+ * Validates any object by looking at its annotated fields, inherited ones included. For every constraint
+ * annotation it runs the Checker named in the annotation's CheckerBinding, so the validator itself doesn't know
+ * any specific constraint.
  *
  * @author Merijn van Rossum
  */
@@ -20,7 +20,10 @@ public class Validator {
     private final Map<Class<? extends Checker>, Checker> checkers = new ConcurrentHashMap<>();
 
     /**
-     * @return every violation found on {@code target}; an empty list if it is valid
+     * Validates all fields of the object, including inherited ones.
+     *
+     * @return all violations found, or an empty list if the object is valid
+     * @throws IllegalStateException if a constraint is placed on a static field
      */
     public List<Violation> validate(final Object target) {
         List<Violation> violations = new ArrayList<>();
@@ -67,7 +70,8 @@ public class Validator {
             return type.getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException(
-                    "Cannot instantiate checker %s (needs an accessible no-arg constructor)".formatted(type.getName()), e);
+                    "Cannot instantiate checker %s (needs an accessible no-arg constructor)"
+                            .formatted(type.getName()), e);
         }
     }
 }

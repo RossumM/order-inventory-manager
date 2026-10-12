@@ -9,13 +9,11 @@ import jakarta.persistence.MappedSuperclass;
 import java.util.UUID;
 
 /**
- * Shared identity for every persistent entity: a surrogate {@code id} (DB-assigned, for FKs and
- * joins) and a {@code uuid} (assigned at construction, the basis for {@code equals}/{@code hashCode}
- * and the future public identifier). {@code equals}/{@code hashCode} are {@code final} and
- * {@code instanceof}-based so lazy proxies compare equal.
+ * Base class for all entities. Every entity has two identifiers: an id that the database assigns, and a uuid
+ * that is generated when the object is created. The uuid is also the one to expose to the outside later.
  *
- * <p>Rationale — why not {@code id} or {@code ==} for equality, the random-UUID index cost, the
- * time-ordered-id alternatives — in {@code docs/design-notes.html} §2.
+ * equals and hashCode are based on the uuid. The id can't be used for that, because it is null until the entity
+ * is saved, so the hash would change after saving.
  *
  * @author Merijn van Rossum
  */

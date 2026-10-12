@@ -1,4 +1,4 @@
-package dev.merijn.orderinventory.validator;
+package dev.merijn.orderinventory.handmade.validation;
 
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * The {@code @NonBlank} rules in isolation, plus one test that the validator enforces the annotation.
+ * Tests the NonBlank rules on their own, plus one test that the validator enforces the annotation.
  *
  * @author Merijn van Rossum
  */

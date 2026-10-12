@@ -10,11 +10,10 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * A single sale: a customer taking one or more products at a point in time.
+ * A sale: a customer buying one or more products at a certain moment.
  *
- * <p>{@code total} is derived from the lines (I7) but kept as a running value for fast reads (P1);
- * {@link #recalculateTotal()} is called whenever the line set changes so the two never drift.
- * An order with zero lines is not valid (I2) — enforced at placement time by the caller, not here.
+ * The total is calculated from the lines, but also stored so it doesn't have to be recalculated every time. It
+ * is refreshed whenever a line is added. Making sure an order has at least one line is up to whoever places it.
  *
  * @author Merijn van Rossum
  */
@@ -33,11 +32,13 @@ public class Order extends AbstractEntity {
         // required by JPA / proxies
     }
 
+    /** Creates a new order with status PLACED. */
     public Order(final Instant placedAt) {
         this.placedAt = Objects.requireNonNull(placedAt, "placedAt");
         this.status = OrderStatus.PLACED;
     }
 
+    /** Adds a line, links it to this order and updates the total. */
     public void addLine(final OrderLine line) {
         Objects.requireNonNull(line, "line");
         line.assignToOrder(this);
@@ -45,12 +46,12 @@ public class Order extends AbstractEntity {
         recalculateTotal();
     }
 
-    /** Unmodifiable view — add lines through {@link #addLine} so the total stays in step. */
+    /** Read-only view of the lines. Use addLine to add one, so the total stays correct. */
     public List<OrderLine> getOrderLines() {
         return Collections.unmodifiableList(orderLines);
     }
 
-    /** Recompute {@code total} as the sum of the line totals (I7). */
+    /** Recalculates the total as the sum of all line totals. */
     public void recalculateTotal() {
         if (orderLines.isEmpty()) {
             this.total = null;
@@ -66,16 +67,19 @@ public class Order extends AbstractEntity {
 
     // --- status lifecycle: PLACED -> CONFIRMED -> FULFILLED, or -> CANCELLED ---
 
+    /** Moves the order from PLACED to CONFIRMED. Any other status throws an IllegalStateException. */
     public void confirm() {
         requireStatus(OrderStatus.PLACED, "confirm");
         this.status = OrderStatus.CONFIRMED;
     }
 
+    /** Moves the order from CONFIRMED to FULFILLED. Any other status throws an IllegalStateException. */
     public void fulfil() {
         requireStatus(OrderStatus.CONFIRMED, "fulfil");
         this.status = OrderStatus.FULFILLED;
     }
 
+    /** Cancels the order. A fulfilled order can't be cancelled (throws an IllegalStateException). */
     public void cancel() {
         if (status == OrderStatus.FULFILLED) {
             throw new IllegalStateException("a fulfilled order cannot be cancelled");
@@ -101,8 +105,6 @@ public class Order extends AbstractEntity {
     public Money getTotal() {
         return total;
     }
-
-    // equals() / hashCode() inherited from AbstractEntity (uuid-based).
 
     @Override
     public String toString() {

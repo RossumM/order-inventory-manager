@@ -6,12 +6,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 /**
- * {@code JpaRepository} gives CRUD + paging; Spring Data generates the implementation
- * (a proxy over {@code SimpleJpaRepository}) at startup and registers it as a bean.
+ * Spring Data generates the implementation of this interface at startup, so only the extra queries need to be
+ * declared.
  *
  * @author Merijn van Rossum
  */
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+    /** Finds a product by its SKU. */
     Optional<Product> findBySku(String sku);
 }

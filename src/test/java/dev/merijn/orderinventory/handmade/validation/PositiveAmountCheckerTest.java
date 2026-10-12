@@ -1,4 +1,4 @@
-package dev.merijn.orderinventory.validator;
+package dev.merijn.orderinventory.handmade.validation;
 
 import dev.merijn.orderinventory.domain.Money;
 import org.junit.jupiter.api.Test;
@@ -12,8 +12,8 @@ import java.util.Currency;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * The {@code @PositiveAmount} rules in isolation (zero counts as positive, as in financial reports; null is
- * valid), plus one test that the validator enforces the annotation.
+ * Tests the PositiveAmount rules on their own (zero counts as positive, null is valid), plus one test that the
+ * validator enforces the annotation.
  *
  * @author Merijn van Rossum
  */

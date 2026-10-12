@@ -1,9 +1,9 @@
-package dev.merijn.orderinventory.validator;
+package dev.merijn.orderinventory.handmade.validation;
 
 import java.lang.annotation.Annotation;
 
 /**
- * {@link NonBlank}: null, empty and whitespace-only strings are invalid.
+ * Rejects null, empty and whitespace-only strings.
  *
  * @author Merijn van Rossum
  */

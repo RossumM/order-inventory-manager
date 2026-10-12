@@ -1,10 +1,7 @@
 package dev.merijn.orderinventory.domain;
 
 /**
- * The category of a {@link StockMovement} — a fixed, known set.
- *
- * <p>{@link #SALE} movements carry a link back to the originating {@link Order};
- * the others do not.
+ * Why a stock movement happened. Only a sale is linked to the order that caused it.
  *
  * @author Merijn van Rossum
  */
